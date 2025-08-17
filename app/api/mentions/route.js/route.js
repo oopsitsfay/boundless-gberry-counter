@@ -1,78 +1,18 @@
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
-  const keyword = searchParams.get('keyword');
+  const keyword = searchParams.get("keyword") || "gberry";
 
-  if (!keyword) {
-    return new Response(JSON.stringify({ error: 'Keyword is required' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  const url = `https://api.twitter.com/2/tweets/search/recent?query=${encodeURIComponent(keyword)}&max_results=100`;
-
-  try {
-    const response = await fetch(url, {
+  const res = await fetch(
+    `https://api.x.com/2/tweets/counts/recent?query=${keyword}`,
+    {
       headers: {
-        Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+        Authorization: "Bearer AAAAAAAAAAAAAHBK3gEAAAAANp9Er%2BviA4AO0oL5X50iTsIITZY%3DXLjgkdTQcpFPCYP3Qkxi40blxEXEYOy9Qfv8sATitAb4WFLZAC",
       },
-    });
-    const data = await response.json();
-
-    if (data.meta) {
-      return new Response(JSON.stringify({ count: data.meta.result_count }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    } else {
-      return new Response(JSON.stringify({ error: 'Could not fetch data', details: data }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
     }
-  } catch (err) {
-    return new Response(JSON.stringify({ error: 'Request failed', details: err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-}export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const keyword = searchParams.get('keyword');
+  );
+  const data = await res.json();
 
-  if (!keyword) {
-    return new Response(JSON.stringify({ error: 'Keyword is required' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  const url = `https://api.twitter.com/2/tweets/search/recent?query=${encodeURIComponent(keyword)}&max_results=100`;
-
-  try {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
-      },
-    });
-    const data = await response.json();
-
-    if (data.meta) {
-      return new Response(JSON.stringify({ count: data.meta.result_count }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    } else {
-      return new Response(JSON.stringify({ error: 'Could not fetch data', details: data }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-  } catch (err) {
-    return new Response(JSON.stringify({ error: 'Request failed', details: err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+  return Response.json({
+    total: data.meta ? data.meta.total_tweet_count : 0,
+  });
 }
-
